@@ -1,26 +1,29 @@
-import React from 'react';
-import logo from './logo.svg';
+import graphql from 'babel-plugin-relay/macro';
 import './App.css';
+import { environment } from './relay-env';
+import { AppHeroQuery } from './__generated__/AppHeroQuery.graphql';
+import { useQuery, RelayEnvironmentProvider } from 'relay-hooks';
+
+const query = graphql`
+  query AppHeroQuery {
+    hero {
+      name
+      id
+    }
+  }
+`;
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <RelayEnvironmentProvider environment={environment}>
+      <Test />
+    </RelayEnvironmentProvider>
   );
+}
+
+function Test() {
+  const { data } = useQuery<AppHeroQuery>(query);
+  return <>{data?.hero?.name ?? null}</>;
 }
 
 export default App;
